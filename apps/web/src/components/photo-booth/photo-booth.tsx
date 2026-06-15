@@ -227,13 +227,13 @@ export const PhotoBooth = () => {
 
       {isCameraOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="flex w-full max-w-lg flex-col gap-4 rounded-xl bg-card p-4">
+          <div className="flex w-full max-w-lg flex-col gap-4 rounded-xl bg-card p-4 text-card-foreground">
             <video ref={videoRef} autoPlay playsInline muted className="aspect-[4/3] w-full rounded-lg bg-black object-cover" />
             <div className="flex gap-3">
-              <Button type="button" className="flex-1" onClick={capturePhoto}>
+              <Button type="button" size="lg" className="flex-1" onClick={capturePhoto}>
                 Снять
               </Button>
-              <Button type="button" variant="outline" className="flex-1" onClick={stopCamera}>
+              <Button type="button" variant="secondary" size="lg" className="flex-1" onClick={stopCamera}>
                 Отмена
               </Button>
             </div>
