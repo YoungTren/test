@@ -10,10 +10,11 @@
 
 | Часть | Технологии |
 |-------|------------|
-| Frontend | Next.js, React, TypeScript, Tailwind CSS |
-| Backend | NestJS, TypeScript |
+| Frontend + API | Next.js, React, TypeScript, Tailwind CSS |
 | AI | Leonardo AI API |
-| Storage | Локальная папка `apps/api/uploads/` |
+| Деплой | Vercel (один сервис) |
+
+NestJS backend (`apps/api`) — опционально для локальной разработки, для продакшена не нужен.
 
 ---
 
@@ -25,88 +26,67 @@
 
 ---
 
-## Настройка Leonardo API
+## Локальный запуск
 
-1. Зарегистрируйтесь на [Leonardo AI](https://leonardo.ai/) и создайте API-ключ.
-2. Скопируйте `.env.example` в `.env` в корне проекта и в `apps/api/.env`:
+1. Скопируйте env:
 
 ```bash
-cp .env.example .env
-cp .env.example apps/api/.env
+cp .env.example apps/web/.env.local
 ```
 
-3. Заполните переменные:
+2. Заполните `apps/web/.env.local`:
 
 ```env
 LEONARDO_API_KEY=your_api_key
-LEONARDO_MODEL_ID=your_model_id
+LEONARDO_MODEL_ID=de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3
 LEONARDO_API_URL=https://cloud.leonardo.ai/api/rest/v1
 ```
 
-Model ID можно получить через [Leonardo API — List Platform Models](https://docs.leonardo.ai/reference/listplatformmodels) или в интерфейсе Leonardo AI.
-
-4. Для frontend создайте `apps/web/.env.local`:
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3001
-```
-
----
-
-## Установка
+3. Установка и запуск:
 
 ```bash
 npm install
-```
-
----
-
-## Запуск
-
-### Backend (порт 3001)
-
-```bash
-npm run dev:api
-```
-
-### Frontend (порт 3000)
-
-В отдельном терминале:
-
-```bash
 npm run dev:web
 ```
 
 Откройте [http://localhost:3000](http://localhost:3000).
 
+API: `POST /api/generate` — внутри Next.js, отдельный backend не нужен.
+
 ---
 
-## Тестирование приложения
+## Деплой на Vercel
 
-1. Откройте страницу в Chrome или Safari (desktop/mobile).
-2. Поставьте галочку согласия — кнопки «Сделать фото» и «Загрузить фото» станут активны.
-3. Сделайте снимок через камеру **или** загрузите JPG/PNG/WebP до 10 MB.
-4. Убедитесь, что исходное фото отображается в блоке превью.
-5. Нажмите «Шахтёр», «Доброволец» или «Фермер» — появится индикатор «Генерация...».
-6. После завершения результат заменит превью.
-7. Переключитесь на другой образ — каждый запрос использует **исходное** фото, не предыдущий результат.
-8. Нажмите «Сохранить изображение» — файл скачается на устройство.
+1. **Root Directory:** `apps/web`
+2. **Framework:** Next.js
+3. **Environment Variables** (Settings → Environment Variables):
 
-### Проверка API напрямую
-
-```bash
-curl -X POST http://localhost:3001/api/generate \
-  -F "image=@/path/to/photo.jpg" \
-  -F "role=miner"
+```env
+LEONARDO_API_KEY=your_api_key
+LEONARDO_API_URL=https://cloud.leonardo.ai/api/rest/v1
+LEONARDO_MODEL_ID=de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3
 ```
 
-Ожидаемый ответ:
+4. **Redeploy**
 
-```json
-{
-  "success": true,
-  "imageUrl": "http://localhost:3001/api/uploads/generated/..."
-}
+Генерация может занимать до 120 секунд. Route настроен с `maxDuration = 120`. На бесплатном плане Vercel лимит 10 сек — для MVP нужен **Pro** или локальный запуск.
+
+`NEXT_PUBLIC_API_URL` **не нужен** — frontend вызывает `/api/generate` на том же домене.
+
+---
+
+## Тестирование
+
+1. Подтвердите согласие
+2. Сделайте или загрузите фото (JPG/PNG/WebP, max 10 MB)
+3. Нажмите «Шахтёр», «Доброволец» или «Фермер»
+4. Дождитесь результата (30–120 сек)
+5. «Сохранить изображение» — скачивание на устройство
+
+```bash
+curl -X POST http://localhost:3000/api/generate \
+  -F "image=@/path/to/photo.jpg" \
+  -F "role=miner"
 ```
 
 ---
@@ -116,8 +96,8 @@ curl -X POST http://localhost:3001/api/generate \
 ```
 test/
 ├── apps/
-│   ├── web/          # Next.js frontend
-│   └── api/          # NestJS backend
+│   ├── web/                    # Next.js (UI + /api/generate)
+│   └── api/                    # NestJS (опционально, локально)
 ├── product.md
 ├── .env.example
 └── README.md
@@ -129,11 +109,11 @@ test/
 
 | Команда | Описание |
 |---------|----------|
-| `npm run dev:web` | Запуск frontend |
-| `npm run dev:api` | Запуск backend с hot reload |
-| `npm run build` | Production build frontend + backend |
-| `npm run lint` | ESLint для frontend |
-| `npm run test` | Vitest для frontend |
+| `npm run dev:web` | Запуск Next.js |
+| `npm run dev:api` | NestJS (опционально) |
+| `npm run build:web` | Production build |
+| `npm run lint` | ESLint |
+| `npm run test` | Vitest |
 
 ---
 

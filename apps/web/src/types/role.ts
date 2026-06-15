@@ -1,5 +1,7 @@
 export type Role = 'miner' | 'military_volunteer' | 'farmer';
 
+export const ROLES: Role[] = ['miner', 'military_volunteer', 'farmer'];
+
 export type RoleOption = {
   value: Role;
   label: string;

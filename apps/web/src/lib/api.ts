@@ -1,7 +1,5 @@
 import type { GenerateResponse, Role } from '@/types/role';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
-
 export const generateImage = async (
   sourceImage: File,
   role: Role,
@@ -10,7 +8,7 @@ export const generateImage = async (
   formData.append('image', sourceImage);
   formData.append('role', role);
 
-  const response = await fetch(`${API_URL}/api/generate`, {
+  const response = await fetch('/api/generate', {
     method: 'POST',
     body: formData,
   });
