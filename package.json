@@ -1,0 +1,18 @@
+{
+  "name": "ai-photo-booth",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev -w web",
+    "dev:api": "npm run start:dev --prefix apps/api",
+    "dev": "npm run dev:web",
+    "build:web": "npm run build -w web",
+    "build:api": "npm run build -w api",
+    "build": "npm run build:api && npm run build:web",
+    "lint": "npm run lint -w web",
+    "test": "npm run test -w web"
+  }
+}
